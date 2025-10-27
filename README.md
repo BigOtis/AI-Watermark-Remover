@@ -10,11 +10,10 @@ AI-powered watermark removal for images and videos using Microsoft Florence-2 an
 What’s different from the original:
 - English-first docs (French guides `DEMARRAGE_RAPIDE.md` and `INSTALLATION_FR.md` are still included).
 - Expanded CLI reference, practical examples, and tips for older GPUs.
+- Original: https://github.com/GitHub30/Sora2WatermarkRemover
 
 ### Demo
-- Removed watermark: [out.webm](https://github.com/user-attachments/assets/d902d040-f54c-4958-8d27-8b3c3bcbb6dd)
-- Source clip: https://github.com/user-attachments/assets/8deffd66-b961-4ec2-9dc0-97695b0f91c5
-
+- TBD
 ---
 
 ### Features
