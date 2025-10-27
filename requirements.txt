@@ -1,0 +1,19 @@
+numpy<2
+opencv-python-headless<4.10
+pillow
+click
+loguru
+tqdm
+PyQt6
+transformers
+iopaint
+# Pin versions to avoid breaking changes in transitive deps
+huggingface_hub<0.25
+# (Optional) If needed, pin diffusers compatible with the above
+# diffusers>=0.25,<0.30
+# Common extras used by deps
+safetensors
+# Torch: pick one suitable for your platform; defaults to CPU if not set
+# For CUDA 12.6 nightly (example):
+# --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu126
+

@@ -1,89 +1,72 @@
-# Script d'installation PowerShell pour WatermarkRemover-AI
+# PowerShell installer for Sora2WatermarkRemover (Python venv + pip)
 Write-Host "====================================" -ForegroundColor Cyan
-Write-Host "  Installation de WatermarkRemover-AI" -ForegroundColor Cyan
+Write-Host "  Installing Sora2WatermarkRemover" -ForegroundColor Cyan
 Write-Host "====================================" -ForegroundColor Cyan
 Write-Host ""
 
-# Vérification de Conda
+# Check Python
 try {
-    $condaVersion = conda --version
-    Write-Host "Conda détecté: $condaVersion" -ForegroundColor Green
+    $pyVersion = python --version
+    Write-Host "Python detected: $pyVersion" -ForegroundColor Green
 }
 catch {
-    Write-Host "Conda n'est pas installé ou n'est pas dans le PATH." -ForegroundColor Red
-    Write-Host "Veuillez installer Miniconda ou Anaconda avant de continuer." -ForegroundColor Red
-    Write-Host "Téléchargez-le sur : https://docs.conda.io/en/latest/miniconda.html" -ForegroundColor Yellow
-    Read-Host -Prompt "Appuyez sur Entrée pour quitter"
+    Write-Host "Python is not installed or not in PATH." -ForegroundColor Red
+    Write-Host "Install Python from https://www.python.org/downloads/ and retry." -ForegroundColor Yellow
+    Read-Host -Prompt "Press Enter to exit"
     exit 1
 }
 
-Write-Host "Vérification de l'environnement..."
-
-# Vérification de l'existence de l'environnement
-$envExists = conda env list | Select-String "py312aiwatermark"
-if ($envExists) {
-    Write-Host "L'environnement py312aiwatermark existe déjà." -ForegroundColor Yellow
-    $recreate = Read-Host "Voulez-vous le recréer? (o/n)"
-    if ($recreate -eq "o" -or $recreate -eq "O") {
-        Write-Host "Suppression de l'ancien environnement..." -ForegroundColor Yellow
-        conda env remove -n py312aiwatermark
-    }
-    else {
-        Write-Host "Activation de l'environnement existant..." -ForegroundColor Green
-        $activateEnv = $true
-    }
-}
-
-if (-not $activateEnv) {
-    Write-Host "Création de l'environnement conda à partir du fichier environment.yml..." -ForegroundColor Cyan
-    conda env create -f environment.yml
+# Create venv if not exists
+$venvPath = ".venv"
+if (-not (Test-Path $venvPath)) {
+    Write-Host "Creating virtual environment (.venv)..." -ForegroundColor Cyan
+    python -m venv .venv
     if ($LASTEXITCODE -ne 0) {
-        Write-Host "Erreur lors de la création de l'environnement." -ForegroundColor Red
-        Read-Host -Prompt "Appuyez sur Entrée pour quitter"
+        Write-Host "Error creating virtual environment." -ForegroundColor Red
+        Read-Host -Prompt "Press Enter to exit"
         exit 1
     }
 }
 
-Write-Host "Activation de l'environnement py312aiwatermark..." -ForegroundColor Cyan
-# Sous PowerShell, nous devons utiliser une approche différente
-# pour activer l'environnement dans le script lui-même
-$condaPath = (Get-Command conda).Source
-$condaExe = Split-Path -Parent $condaPath
-$activateScript = Join-Path $condaExe "..\..\shell\condabin\conda-hook.ps1"
+# Activate venv
+Write-Host "Activating virtual environment..." -ForegroundColor Cyan
+$activateScript = Join-Path $venvPath "Scripts\\Activate.ps1"
 . $activateScript
-conda activate py312aiwatermark
 
-Write-Host "Installation des dépendances supplémentaires..." -ForegroundColor Cyan
-pip install PyQt6 transformers iopaint opencv-python-headless
+# Upgrade pip and install requirements
+Write-Host "Upgrading pip..." -ForegroundColor Cyan
+python -m pip install --upgrade pip
+Write-Host "Installing dependencies from requirements.txt..." -ForegroundColor Cyan
+pip install -r requirements.txt
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "Erreur lors de l'installation des dépendances." -ForegroundColor Red
-    Read-Host -Prompt "Appuyez sur Entrée pour quitter"
+    Write-Host "Error installing dependencies." -ForegroundColor Red
+    Read-Host -Prompt "Press Enter to exit"
     exit 1
 }
 
-Write-Host "Téléchargement du modèle LaMA..." -ForegroundColor Cyan
+Write-Host "Downloading LaMa model..." -ForegroundColor Cyan
 iopaint download --model lama
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "Avertissement: Erreur lors du téléchargement du modèle LaMA." -ForegroundColor Yellow
-    Write-Host "Vous pourrez réessayer plus tard avec la commande: iopaint download --model lama" -ForegroundColor Yellow
+    Write-Host "Warning: Error downloading the LaMa model." -ForegroundColor Yellow
+    Write-Host "You can retry later with: iopaint download --model lama" -ForegroundColor Yellow
 }
 
 Write-Host ""
 Write-Host "===============================" -ForegroundColor Green
-Write-Host "  Installation terminée!" -ForegroundColor Green
+Write-Host "  Installation complete!" -ForegroundColor Green
 Write-Host "===============================" -ForegroundColor Green
 Write-Host ""
-Write-Host "Pour lancer l'application:" -ForegroundColor Cyan
-Write-Host "1. Ouvrez une invite de commande PowerShell" -ForegroundColor Cyan
-Write-Host "2. Activez l'environnement: conda activate py312aiwatermark" -ForegroundColor Cyan
-Write-Host "3. Lancez l'application: python remwmgui.py" -ForegroundColor Cyan
+Write-Host "To launch the application:" -ForegroundColor Cyan
+Write-Host "1. Open PowerShell" -ForegroundColor Cyan
+Write-Host "2. Activate venv: .\\.venv\\Scripts\\Activate.ps1" -ForegroundColor Cyan
+Write-Host "3. Start the GUI: python remwmgui.py" -ForegroundColor Cyan
 Write-Host ""
 
-$launch = Read-Host "Voulez-vous lancer l'application maintenant? (o/n)"
-if ($launch -eq "o" -or $launch -eq "O") {
-    Write-Host "Lancement de l'application..." -ForegroundColor Green
+$launch = Read-Host "Launch the application now? (y/n)"
+if ($launch -eq "y" -or $launch -eq "Y") {
+    Write-Host "Launching application..." -ForegroundColor Green
     python remwmgui.py
 }
 
 Write-Host ""
-Read-Host -Prompt "Appuyez sur Entrée pour quitter" 
+Read-Host -Prompt "Press Enter to exit"

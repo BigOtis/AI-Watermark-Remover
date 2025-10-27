@@ -1,14 +1,13 @@
-# Guide d'Installation de WatermarkRemover-AI pour Windows
+# Windows Installation Guide (English)
 
-Ce guide vous aidera à installer et configurer WatermarkRemover-AI sur votre système Windows.
+This guide helps you install and configure Sora2WatermarkRemover on Windows.
 
-## Prérequis
+## Prerequisites
 
-1. **Python et Conda** : Vous devez avoir Miniconda ou Anaconda installé sur votre système. Si ce n'est pas le cas, téléchargez et installez Miniconda depuis [le site officiel](https://docs.conda.io/en/latest/miniconda.html).
+1. **Python and Conda**: Install Miniconda or Anaconda from the official site: [miniconda](https://docs.conda.io/en/latest/miniconda.html).
+2. **Git**: Optional, to clone this repository: [git-scm.com](https://git-scm.com/downloads).
 
-2. **Git** : Si vous souhaitez cloner directement le dépôt, vous aurez besoin de Git. Téléchargez-le depuis [git-scm.com](https://git-scm.com/downloads).
-
-## Méthode 1: Utilisation du script d'installation automatique
+## Method 1: Automatic install script (Python venv)
 
 1. Ouvrez une invite de commande (CMD) dans le dossier du projet.
 
@@ -17,91 +16,92 @@ Ce guide vous aidera à installer et configurer WatermarkRemover-AI sur votre sy
    install_windows.bat
    ```
 
-3. Suivez les instructions à l'écran.
+3. Follow the on-screen instructions.
 
-## Méthode 2: Installation manuelle
+## Method 2: Manual installation (Python venv)
 
 Si le script automatique ne fonctionne pas, suivez ces étapes manuelles:
 
 1. **Ouvrez une invite de commande** (CMD) ou PowerShell avec les droits administrateur.
 
-2. **Naviguez vers le dossier du projet**:
+2. **Navigate to the project folder**:
    ```
    cd chemin\vers\WatermarkRemover-AI
    ```
 
-3. **Créez l'environnement conda**:
+3. **Create a Python virtual environment**:
    ```
-   conda env create -f environment.yml
-   ```
-
-4. **Activez l'environnement**:
-   ```
-   conda activate py312aiwatermark
+   python -m venv .venv
    ```
 
-5. **Installez les dépendances supplémentaires**:
+4. **Activate the environment**:
    ```
-   pip install PyQt6 transformers iopaint opencv-python-headless
+   .\.venv\Scripts\activate    # Windows
+   source .venv/bin/activate     # macOS/Linux
    ```
 
-6. **Téléchargez le modèle LaMA**:
+5. **Install dependencies**:
+   ```
+   pip install -r requirements.txt
+   ```
+
+6. **Download the LaMa model**:
    ```
    iopaint download --model lama
    ```
 
-## Lancement de l'application
+## Launching the application
 
-Après l'installation, vous pouvez lancer l'application:
+After installation, launch the application:
 
-1. **Activez l'environnement** (si ce n'est pas déjà fait):
+1. **Activate the environment** (if not already active):
    ```
    conda activate py312aiwatermark
    ```
 
-2. **Lancez l'application GUI**:
+2. **Start the GUI application**:
    ```
    python remwmgui.py
    ```
 
-## Utilisation
+## Usage
 
-Une fois l'application lancée:
+Once the application is running:
 
-1. **Choisissez le mode de traitement**:
-   - Traitement d'une image unique
-   - Traitement d'un dossier entier
+1. **Choose processing mode**:
+   - Single image
+   - Whole directory
 
-2. **Sélectionnez les chemins d'entrée et de sortie**.
+2. **Select input and output paths**.
 
-3. **Configurez les options**:
-   - Activez l'écrasement des fichiers existants si nécessaire
-   - Définissez si les zones de filigrane doivent être rendues transparentes
-   - Ajustez la taille maximale de la boîte englobante pour la détection
-   - Sélectionnez le format de sortie (PNG, WEBP, JPG ou format d'origine)
+3. **Configure options**:
+   - Overwrite existing files if needed
+   - Make watermark regions transparent
+   - Adjust maximum bounding box size for detection
+   - Select output format (PNG, WEBP, JPG or original)
 
-4. **Cliquez sur "Start" pour commencer le traitement**.
+4. **Click "Start" to begin processing**.
 
-## Problèmes courants et solutions
+## Common issues and solutions
 
-### Problème: "Conda n'est pas reconnu comme une commande interne ou externe"
-**Solution**: Assurez-vous que Conda est correctement installé et que son chemin est ajouté à la variable d'environnement PATH.
+### Issue: "Conda is not recognized as an internal or external command"
+**Solution**: Ensure Conda is installed and its path is added to your environment PATH.
 
-### Problème: Échec lors de l'installation des dépendances
-**Solution**: Essayez d'exécuter les commandes d'installation individuellement et vérifiez les messages d'erreur spécifiques.
+### Issue: Dependency installation failed
+**Solution**: Run install commands individually and check specific error messages.
 
-### Problème: L'application ne démarre pas
-**Solution**: Vérifiez que l'environnement Python est correctement activé avec `conda activate py312aiwatermark`.
+### Issue: The application does not start
+**Solution**: Make sure the environment is activated: `conda activate py312aiwatermark`.
 
-### Problème: Le modèle LaMA ne se télécharge pas
-**Solution**: Assurez-vous d'avoir une connexion Internet stable et réessayez avec la commande `iopaint download --model lama`.
+### Issue: LaMa model download fails
+**Solution**: Ensure stable internet and retry: `iopaint download --model lama`.
 
 ## Support
 
-Si vous rencontrez des problèmes, vous pouvez:
-- Ouvrir une issue sur le [dépôt GitHub](https://github.com/D-Ogi/WatermarkRemover-AI)
-- Consulter les discussions existantes pour voir si quelqu'un a déjà rencontré le même problème
+If you encounter issues:
+- Open an issue on the repository
+- Check discussions for similar problems
 
 ---
 
-Profitez de votre nouvel outil de suppression de filigranes alimenté par l'IA! 
+Enjoy your new AI-powered watermark remover!

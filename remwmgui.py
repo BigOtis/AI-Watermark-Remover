@@ -46,17 +46,17 @@ class Worker(QObject):
                             progress = int(line.strip().split("overall_progress:")[1].strip())
                             self.progress_signal.emit(progress)
                         except (ValueError, IndexError) as e:
-                            self.log_signal.emit(f"Erreur de parsing de la progression: {str(e)}")
+                            self.log_signal.emit(f"Progress parsing error: {str(e)}")
                 else:
                     # Petite pause pour éviter d'utiliser trop de CPU
                     time.sleep(0.1)
             
             # Vérifier si le processus s'est terminé normalement
             if self.process.returncode is not None and self.process.returncode != 0:
-                self.error_signal.emit(f"Le processus s'est terminé avec le code d'erreur: {self.process.returncode}")
+                self.error_signal.emit(f"Process exited with error code: {self.process.returncode}")
                 
         except Exception as e:
-            self.error_signal.emit(f"Erreur dans le worker: {str(e)}")
+            self.error_signal.emit(f"Worker error: {str(e)}")
         finally:
             # S'assurer que les flux sont fermés
             try:
@@ -71,7 +71,7 @@ class Worker(QObject):
         try:
             for line in iter(self.process.stderr.readline, ""):
                 if line:
-                    self.log_signal.emit(f"ERREUR: {line}")
+                    self.log_signal.emit(f"ERROR: {line}")
         except:
             pass
 
@@ -303,8 +303,8 @@ class WatermarkRemoverGUI(QMainWindow):
             if not ffmpeg_available:
                 response = QMessageBox.warning(
                     self, 
-                    "FFmpeg non disponible", 
-                    "FFmpeg n'est pas disponible sur votre système. Les vidéos traitées n'auront pas de son.\n\nVoulez-vous continuer quand même?",
+                    "FFmpeg not available", 
+                    "FFmpeg is not available on your system. Processed videos will have no audio.\n\nDo you want to continue?",
                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
                     QMessageBox.StandardButton.No
                 )
@@ -445,20 +445,20 @@ class WatermarkRemoverGUI(QMainWindow):
                     self.radio_batch.setChecked(True)
 
     def handle_error(self, error_message):
-        """Gère les erreurs signalées par le worker"""
+        """Handle errors reported by the worker"""
         self.logs.append(f"<span style='color:red'>{error_message}</span>")
         # Rendre les logs visibles en cas d'erreur
         if not self.logs.isVisible():
             self.toggle_logs_button.setChecked(True)
             self.toggle_logs(True)
-        QMessageBox.critical(self, "Erreur", f"Une erreur est survenue: {error_message}")
+        QMessageBox.critical(self, "Error", f"An error occurred: {error_message}")
 
     def closeEvent(self, event):
         self.save_config()
         event.accept()
 
     def check_ffmpeg_available(self):
-        """Vérifie si FFmpeg est disponible sur le système"""
+        """Check if FFmpeg is available on the system"""
         try:
             # Essayer d'exécuter ffmpeg -version pour vérifier s'il est installé
             subprocess.check_output(["ffmpeg", "-version"], stderr=subprocess.STDOUT)

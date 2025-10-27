@@ -1,48 +1,32 @@
-# PowerShell equivalent of setup.sh for Windows
-$ENV_NAME = "py312aiwatermark"
-$ENV_FILE = "environment.yml"
-
-# Check if conda is installed
+# PowerShell setup using Python venv
 try {
-    conda --version > $null
+  $py = python --version
+  Write-Host "Python detected: $py"
 }
 catch {
-    Write-Host "Conda could not be found. Please install Conda or Miniconda and try again."
-    exit 1
+  Write-Host "Python is not installed or not in PATH." -ForegroundColor Red
+  exit 1
 }
 
-# Check if the environment already exists
-$envExists = conda env list | Select-String "^$ENV_NAME\s"
-
-if ($envExists) {
-    Write-Host "Environment '$ENV_NAME' already exists. Activating it..."
-    conda activate $ENV_NAME
-}
-else {
-    # Create the Conda environment
-    Write-Host "Creating Conda environment '$ENV_NAME' from '$ENV_FILE'..."
-    conda env create -f $ENV_FILE
-    if ($LASTEXITCODE -ne 0) {
-        Write-Host "Failed to create the Conda environment."
-        exit 1
-    }
-    conda activate $ENV_NAME
+if (-not (Test-Path ".venv")) {
+  Write-Host "Creating virtual environment (.venv)..."
+  python -m venv .venv
 }
 
-# Ensure required dependencies are installed
-$packages = @("PyQt6", "transformers", "iopaint", "opencv-python-headless")
-foreach ($package in $packages) {
-    $installed = pip list | Select-String $package
-    if (-not $installed) {
-        Write-Host "Installing $package..."
-        pip install $package
-    }
-}
+Write-Host "Activating virtual environment..."
+. .\.venv\Scripts\Activate.ps1
 
-# Download the LaMA model
-Write-Host "Downloading the LaMA model..."
+Write-Host "Upgrading pip..."
+python -m pip install --upgrade pip
+
+Write-Host "Installing dependencies..."
+pip install -r requirements.txt
+
+Write-Host "Downloading LaMa model..."
 iopaint download --model lama
 
-# Launch the GUI
-Write-Host "Launching the GUI application..."
-python remwmgui.py 
+if ($args.Count -gt 0) {
+  python remwm.py @args
+} else {
+  python remwmgui.py
+}
